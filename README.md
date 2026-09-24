@@ -12,8 +12,7 @@
 |---|---|---|
 | **W3-PM1** | Password Cracking with JTR | ✅ Completed |
 | **W3-PM2** | Password Cracking with Networkwalks Tools | ✅ Completed |
-| **W3-OPTIONAL1** | AI – JTR Password Cracking Lab with Claude & Hexstrike MCP | ⏳ In Progress |
-| **W3-OPTIONAL2** | Mediroza Hospital Patient Portal Hacking | ⏳ In Progress |
+| **W3-OPTIONAL1** | AI – JTR Password Cracking Lab with Claude & Hexstrike MCP | ✅ Completed |
 
 ---
 
@@ -158,6 +157,168 @@ I entered the recovered password into the protected PDF and successfully opened 
 
 ![Step 6 – Password verification / lab result](step-8.png)
 
+
+---
+
+## W3-OPTIONAL1 – AI – JTR Password Cracking Lab with Claude & HexStrike MCP
+
+
+### Objective
+
+The objective of W3-OPTIONAL1 was to crack the password of the supplied Networkwalks training PDF using **John the Ripper (JTR)** with the assistance of **Claude Desktop and HexStrike-AI MCP** on Kali Linux.
+
+The Networkwalks AI-version lab specifies using HexStrike-AI MCP with Claude Desktop and JTR for the password-cracking exercise.
+
+### Tools Used
+
+- Kali Linux
+- Claude Desktop
+- HexStrike-AI MCP Server
+- John the Ripper (JTR)
+- `rockyou.txt`
+- Networkwalks training PDF
+
+---
+
+### Step 1 – Install Claude Desktop
+
+I installed Claude Desktop on Kali Linux using the Debian package repository.
+
+The setup process included adding the GPG key, adding the Claude Desktop repository, updating the package list, and installing Claude Desktop.
+
+```bash
+curl -fsSL https://pkg.claude-desktop-debian.dev/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/claude-desktop.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/claude-desktop.gpg arch=amd64,arm64] https://pkg.claude-desktop-debian.dev stable main" | sudo tee /etc/apt/sources.list.d/claude-desktop.list
+
+sudo apt update
+sudo apt install claude-desktop-unofficial
+```
+
+![Step 1 – Claude Desktop installation](step-10.png)
+
+---
+
+### Step 2 – Clone and Set Up HexStrike-AI
+
+I cloned the HexStrike-AI repository and created a Python virtual environment.
+
+```bash
+git clone https://github.com/0x4m4/hexstrike-ai.git
+cd hexstrike-ai
+
+python3 -m venv hexstrike-env
+source hexstrike-env/bin/activate
+
+pip3 install -r requirements.txt
+```
+
+![Step 2 – Clone and set up HexStrike-AI](step-11.png)
+
+---
+
+### Step 3 – Start the HexStrike MCP Server
+
+After installing the required dependencies, I started the HexStrike server.
+
+```bash
+cd ~/hexstrike-ai
+source hexstrike-env/bin/activate
+python3 hexstrike_server.py
+```
+
+The HexStrike MCP server started successfully on the local system.
+
+![Step 3 – HexStrike MCP server running](step-12.png)
+
+---
+
+### Step 4 – Configure HexStrike MCP in Claude Desktop
+
+I configured the HexStrike MCP server in Claude Desktop using the following MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "hexstrike-ai": {
+      "command": "/home/kali/hexstrike-ai/hexstrike-env/bin/python",
+      "args": [
+        "/home/kali/hexstrike-ai/hexstrike_mcp.py",
+        "--server",
+        "http://localhost:8888"
+      ]
+    }
+  }
+}
+```
+
+
+---
+
+### Step 5 – Verify the HexStrike MCP Server
+
+I checked the HexStrike MCP server through Claude Desktop to verify that the MCP integration was working.
+
+The server was successfully connected and the available HexStrike tools were displayed.
+
+![Step 5 – Verify HexStrike MCP server](step-13.png)
+
+---
+
+### Step 6 – Check John the Ripper Installation
+
+I asked Claude to check whether John the Ripper was installed in the HexStrike MCP environment and to show its version.
+
+The reported JTR version was:
+
+```text
+1.9.0-jumbo-1+bleeding-aec1328d6c
+```
+
+![Step 6 – Check JTR installation and version](step-14.png)
+
+---
+
+
+
+### Step 7 – Use JTR Through HexStrike MCP
+
+I used Claude to request the JTR tool through the HexStrike MCP server and specified the `rockyou.txt` wordlist for the authorized training PDF.
+
+The workflow was:
+
+```text
+Claude Desktop
+      ↓
+HexStrike MCP
+      ↓
+John the Ripper
+      ↓
+rockyou.txt
+      ↓
+Password recovered
+```
+
+![Step 7 – AI-assisted JTR password cracking](step-15.png)
+
+---
+
+### Step 8 – Password Recovered
+
+The password was successfully recovered through the Claude + HexStrike MCP + JTR workflow.
+
+![Step 8 – Password cracking result](step-15.png)
+
+
+---
+### Step 9 – Verify the Password
+
+I entered the recovered password into the protected PDF and successfully opened the file.
+
+![Step 9 – Password verification / lab result](step-16.png)
+
+
+
 ---
 
 ## Flags Captured
@@ -174,7 +335,11 @@ nw{cybersecurity_flag_captured_2608}
 nw{networkwalks_persistence_jtr_270521}
 ```
 
+### W3-OPTIONAL1
 
+```text
+nw{networkwalks_flag_260821_1}
+```
 ---
 
 ## Final Results
@@ -183,7 +348,7 @@ nw{networkwalks_persistence_jtr_270521}
 |---|---|---|---|
 | W3-PM1 | John the Ripper | `good-luck` | Successfully cracked |
 | W3-PM2 | Networkwalks Password Cracker | `password1` | Successfully cracked |
-
+| **W3-OPTIONAL1** | Claude + HexStrike MCP + JTR | `1qaz2wsx` |  Successfully cracked |
 ---
 
 ## What I Learned
@@ -206,6 +371,8 @@ In **W3-PM1**, I used John the Ripper on Kali Linux to extract and crack the pas
 
 In **W3-PM2**, I used the Networkwalks Hash Calculator and Password Cracker to extract the PDF hash and recover its password.
 
+In **W3-OPTIONAL1**, I configured Claude Desktop with HexStrike-AI MCP and used the JTR integration with the `rockyou.txt` wordlist to complete the authorized Networkwalks training exercise.
+
 The exercises demonstrated the workflow of extracting a protected PDF hash, performing a dictionary attack, recovering the password, and verifying the password by opening the protected PDF.
 
 ---
@@ -217,5 +384,7 @@ The exercises demonstrated the workflow of extracting a protected PDF hash, perf
 - John the Ripper: https://www.openwall.com/john/
 - Networkwalks Hash Calculator: https://networkwalks.com/hash-calculator/
 - Networkwalks Password Cracker: https://networkwalks.com/password-cracker/
+- HexStrike-AI: https://github.com/0x4m4/hexstrike-ai
+- Claude Desktop Debian: https://github.com/aaddrick/claude-desktop-debian
 
 > **Note:** These password-cracking activities were performed against the supplied cybersecurity training/lab PDFs.
